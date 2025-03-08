@@ -3,13 +3,11 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import Product from "../models/product";
 import { Link } from "react-router";
-import { CartContext } from "../carts/cart.context";
 
 
 const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [showErrorBanner, setShowErrorBanner] = useState(false);
-    const cart = useContext(CartContext);
 
     useEffect(() => {
         const fetchProducts = async () => {

@@ -1,15 +1,19 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { SetStateAction, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Product from "../models/product";
 import { Button } from "@mui/material";
-import { CartContext, CartContextModel } from "../carts/cart.context";
+import Cart from "../models/cart";
 
-const ProductDetails = () => {
+interface ProductDetailsProps{
+    cart: Cart
+    setCart: React.Dispatch<SetStateAction<Cart>>
+}
+
+const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
     let {productId} = useParams();
     const [product, setProduct] = useState<Product>();
     const [showErrorBanner, setShowErrorBanner] = useState(false);
-    const {cart, setCart} = useContext<CartContextModel | undefined>(CartContext);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -30,13 +34,33 @@ const ProductDetails = () => {
             <h1>{product?.name}</h1>
             <h2>{product?.description}</h2>
             <Button size="small" onClick={async () => {
-                let request = {
-                    products: [product?.id]
-                };
+                if (cart.id === ""){
+                    console.log("if");
+                    let createCartResponse = await axios.post(`http://localhost:9091/carts`, {});
+                    let createdCartId = createCartResponse.data.id;
 
-                let response = await axios.post(`http://localhost:9091/carts`, request);
-                response = await axios.get(`http://localhost:9091/carts/${response.data.id}`);
-                setCart(response.data.carts[0])
+                    let addProductToCartRequest = {
+                        cart_id: createdCartId,
+                        product_id: product?.id
+                    };
+                    let addProductToCartResponse = await axios.put(`http://localhost:9091/carts/addProductToCart`, addProductToCartRequest)
+
+                    let getCartResponse = await axios.get(`http://localhost:9091/carts/${addProductToCartResponse.data.cart_id}`);
+                    console.log(getCartResponse.data.carts[0])
+                    setCart(getCartResponse.data.carts[0]);
+                }
+                else {
+                    console.log("else");
+                    let addProductToCartRequest = {
+                        cart_id: cart.id,
+                        product_id: product?.id
+                    };
+                    let addProductToCartResponse = await axios.put(`http://localhost:9091/carts/addProductToCart`, addProductToCartRequest)
+
+                    let getCartResponse = await axios.get(`http://localhost:9091/carts/${addProductToCartResponse.data.cart_id}`);
+                    console.log(getCartResponse.data.carts[0])
+                    setCart(getCartResponse.data.carts[0]);
+                }
             }}>Add to Cart</Button>
         </>
     )
