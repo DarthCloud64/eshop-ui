@@ -35,7 +35,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
             <h2>{product?.description}</h2>
             <Button size="small" onClick={async () => {
                 if (cart.id === ""){
-                    console.log("if");
                     let createCartResponse = await axios.post(`http://localhost:9091/carts`, {});
                     let createdCartId = createCartResponse.data.id;
 
@@ -46,11 +45,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
                     let addProductToCartResponse = await axios.put(`http://localhost:9091/carts/addProductToCart`, addProductToCartRequest)
 
                     let getCartResponse = await axios.get(`http://localhost:9091/carts/${addProductToCartResponse.data.cart_id}`);
-                    console.log(getCartResponse.data.carts[0])
                     setCart(getCartResponse.data.carts[0]);
+                    localStorage.setItem("user-cart", JSON.stringify(getCartResponse.data.carts[0]));
                 }
                 else {
-                    console.log("else");
                     let addProductToCartRequest = {
                         cart_id: cart.id,
                         product_id: product?.id
@@ -58,8 +56,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
                     let addProductToCartResponse = await axios.put(`http://localhost:9091/carts/addProductToCart`, addProductToCartRequest)
 
                     let getCartResponse = await axios.get(`http://localhost:9091/carts/${addProductToCartResponse.data.cart_id}`);
-                    console.log(getCartResponse.data.carts[0])
                     setCart(getCartResponse.data.carts[0]);
+                    localStorage.setItem("user-cart", JSON.stringify(getCartResponse.data.carts[0]));
                 }
             }}>Add to Cart</Button>
         </>
