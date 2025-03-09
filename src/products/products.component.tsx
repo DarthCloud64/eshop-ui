@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Container, Grid2, Typography } from "@mui/material";
+import { Alert, Button, Card, CardActions, CardContent, Container, Grid2, Typography } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import Product from "../models/product";
@@ -33,6 +33,7 @@ const Products = () => {
                             <CardContent>
                                 <h3>{product.name}</h3>
                                 <h4>${product.price.toFixed(2)}</h4>
+                                {product.inventory < 10 ? <><Alert severity="error">Limited Inventory: {product.inventory}</Alert></> : <></>}
                             </CardContent>
                             <CardActions>
                                 <Link to={`/products/${product.id}`}><Button size="small">View</Button></Link>
