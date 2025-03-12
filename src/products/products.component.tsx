@@ -1,13 +1,12 @@
-import { Alert, Button, Card, CardActions, CardContent, Container, Grid2, Typography } from "@mui/material";
+import { Alert, Button, Card, CardActions, CardContent, Grid2 } from "@mui/material";
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Product from "../models/product";
 import { Link } from "react-router";
 
 
 const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
-    const [showErrorBanner, setShowErrorBanner] = useState(false);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -16,7 +15,7 @@ const Products = () => {
                 setProducts(products.data.products);
             }
             catch{
-                setShowErrorBanner(true);
+                
             }
         }
 

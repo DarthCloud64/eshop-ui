@@ -7,7 +7,6 @@ import Cart from './models/cart'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 const App = () => {
-  const [count, setCount] = useState(0);
   const [cart, setCart] = useState<Cart>(() => {
     try {
       const savedCart = JSON.parse(localStorage.getItem("user-cart") || "");

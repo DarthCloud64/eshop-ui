@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SetStateAction, useContext, useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Product from "../models/product";
 import { Button } from "@mui/material";
@@ -13,7 +13,6 @@ interface ProductDetailsProps{
 const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
     let {productId} = useParams();
     const [product, setProduct] = useState<Product>();
-    const [showErrorBanner, setShowErrorBanner] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -22,7 +21,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
                 setProduct(product.data.products[0]);
             }
             catch{
-                setShowErrorBanner(true);
+                
             }
         }
 
