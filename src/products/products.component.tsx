@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Product from "../models/product";
 import { Link } from "react-router";
 
+const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? '';
 
 const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -11,7 +12,9 @@ const Products = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try{
-                let products = await axios.get("http://localhost:9090/products");
+                console.log("import.meta.env: ", import.meta.env); 
+                console.log(`${productServiceUrl}/products`)
+                let products = await axios.get(`${productServiceUrl}/products`);
                 setProducts(products.data.products);
             }
             catch{

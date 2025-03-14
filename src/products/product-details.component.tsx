@@ -5,6 +5,9 @@ import Product from "../models/product";
 import { Button } from "@mui/material";
 import Cart from "../models/cart";
 
+const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? '';
+const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? '';
+
 interface ProductDetailsProps{
     cart: Cart
     setCart: React.Dispatch<SetStateAction<Cart>>
@@ -17,7 +20,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
     useEffect(() => {
         const fetchProduct = async () => {
             try{
-                let product = await axios.get(`http://localhost:9090/products/${productId}`);
+                let product = await axios.get(`${productServiceUrl}/products/${productId}`);
                 setProduct(product.data.products[0]);
             }
             catch{
@@ -34,16 +37,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
             <h2>{product?.description}</h2>
             <Button size="small" onClick={async () => {
                 if (cart.id === ""){
-                    let createCartResponse = await axios.post(`http://localhost:9091/carts`, {});
+                    let createCartResponse = await axios.post(`${orderServiceUrl}/carts`, {});
                     let createdCartId = createCartResponse.data.id;
 
                     let addProductToCartRequest = {
                         cart_id: createdCartId,
                         product_id: product?.id
                     };
-                    let addProductToCartResponse = await axios.put(`http://localhost:9091/carts/addProductToCart`, addProductToCartRequest)
+                    let addProductToCartResponse = await axios.put(`${orderServiceUrl}/carts/addProductToCart`, addProductToCartRequest)
 
-                    let getCartResponse = await axios.get(`http://localhost:9091/carts/${addProductToCartResponse.data.cart_id}`);
+                    let getCartResponse = await axios.get(`${orderServiceUrl}/carts/${addProductToCartResponse.data.cart_id}`);
                     setCart(getCartResponse.data.carts[0]);
                     localStorage.setItem("user-cart", JSON.stringify(getCartResponse.data.carts[0]));
                 }
@@ -52,9 +55,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
                         cart_id: cart.id,
                         product_id: product?.id
                     };
-                    let addProductToCartResponse = await axios.put(`http://localhost:9091/carts/addProductToCart`, addProductToCartRequest)
+                    let addProductToCartResponse = await axios.put(`${orderServiceUrl}/carts/addProductToCart`, addProductToCartRequest)
 
-                    let getCartResponse = await axios.get(`http://localhost:9091/carts/${addProductToCartResponse.data.cart_id}`);
+                    let getCartResponse = await axios.get(`${orderServiceUrl}/carts/${addProductToCartResponse.data.cart_id}`);
                     setCart(getCartResponse.data.carts[0]);
                     localStorage.setItem("user-cart", JSON.stringify(getCartResponse.data.carts[0]));
                 }
