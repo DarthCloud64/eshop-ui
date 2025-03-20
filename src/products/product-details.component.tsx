@@ -1,3 +1,5 @@
+declare const window: any;
+
 import axios from "axios";
 import { SetStateAction, useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -5,8 +7,8 @@ import Product from "../models/product";
 import { Button } from "@mui/material";
 import Cart from "../models/cart";
 
-const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? '';
-const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? '';
+const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
+const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? window._env_.VITE_ORDER_SERVICE;
 
 interface ProductDetailsProps{
     cart: Cart

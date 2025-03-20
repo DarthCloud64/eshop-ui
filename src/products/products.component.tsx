@@ -1,10 +1,12 @@
+declare const window: any;
+
 import { Alert, Button, Card, CardActions, CardContent, Grid2 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Product from "../models/product";
 import { Link } from "react-router";
 
-const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? '';
+const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
 
 const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
