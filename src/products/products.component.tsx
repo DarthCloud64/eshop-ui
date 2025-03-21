@@ -29,7 +29,7 @@ const Products = () => {
 
     return (
         <>
-            <h1>Products</h1>
+            <h1>Products!!!</h1>
             <Grid2 container spacing={2}>
                 {products && products.map && products.map((product) => (
                     <Grid2 size={4}>
