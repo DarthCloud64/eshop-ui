@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - run: npm run build-dev
     - name: Build the Docker image
-      run: docker build -t eshop-ui . --file Dockerfile
+      uses: actions/checkout@v4
+    - run: docker build -t eshop-ui . --file Dockerfile
