@@ -22,6 +22,11 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
+    
+    - name: Replace tokens with secrets in .env.development
+      run: |
+        sed -i "s/__VITE_AUTH0_DOMAIN__/${{ secrets.AUTH0_DOMAIN }}/g" .env.development
+        sed -i "s/__VITE_AUTH0_CLIENT_ID__/${{ secrets.AUTH0_CLIENT_ID }}/g" .env.development
 
     - name: Build the eshop React App ${{matrix.node-version}}
       uses: actions/setup-node@v4
