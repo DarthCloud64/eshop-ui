@@ -34,7 +34,7 @@ const App = () => {
       <BrowserRouter>
         <Grid2 container spacing={2}>
         <Grid2 size={2}>
-            <button onClick={() => logout()}>Logout</button>
+            <button onClick={() => logout({logoutParams: {returnTo: window.location.origin}})}>Logout</button>
           </Grid2>
           <Grid2 size={2}>
             <h3>{user?.name}</h3>
