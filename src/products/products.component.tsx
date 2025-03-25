@@ -5,18 +5,29 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Product from "../models/product";
 import { Link } from "react-router";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
+const productServiceAudience = import.meta.env.VITE_AUTH0_PRODUCT_AUDIENCE ?? window._env_.VITE_AUTH0_PRODUCT_AUDIENCE;
 
 const Products = () => {
+    const {getAccessTokenSilently} = useAuth0();
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
+        console.log(productServiceAudience);
         const fetchProducts = async () => {
             try{
-                console.log("import.meta.env: ", import.meta.env); 
-                console.log(`${productServiceUrl}/products`)
-                let products = await axios.get(`${productServiceUrl}/products`);
+                const accessToken = await getAccessTokenSilently({
+                    authorizationParams: {
+                        audience: productServiceAudience
+                    }
+                })
+                let products = await axios.get(`${productServiceUrl}/products`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
                 setProducts(products.data.products);
             }
             catch{
