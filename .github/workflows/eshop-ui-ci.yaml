@@ -27,6 +27,7 @@ jobs:
       run: |
         sed -i "s/__VITE_AUTH0_DOMAIN__/${{ secrets.VITE_AUTH0_DOMAIN }}/g" .env.development
         sed -i "s/__VITE_AUTH0_CLIENT_ID__/${{ secrets.VITE_AUTH0_CLIENT_ID }}/g" .env.development
+        sed -i "s/__VITE_AUTH0_AUDIENCE__/${{ secrets.VITE_AUTH0_AUDIENCE }}/g" .env.development
 
     - name: Build the eshop React App ${{matrix.node-version}}
       uses: actions/setup-node@v4
