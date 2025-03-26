@@ -1,13 +1,15 @@
 declare const window: any;
 
 import axios from "axios";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import Product from "../models/product";
 import { Button } from "@mui/material";
 import Cart from "../models/cart";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
+const productServiceAudience = import.meta.env.VITE_AUTH0_PRODUCT_AUDIENCE ?? window._env_.VITE_AUTH0_PRODUCT_AUDIENCE;
 const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? window._env_.VITE_ORDER_SERVICE;
 
 interface ProductDetailsProps{
@@ -17,12 +19,25 @@ interface ProductDetailsProps{
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
     let {productId} = useParams();
+    const initialized = useRef(false);
+    const {getAccessTokenSilently} = useAuth0();
     const [product, setProduct] = useState<Product>();
 
     useEffect(() => {
         const fetchProduct = async () => {
             try{
-                let product = await axios.get(`${productServiceUrl}/products/${productId}`);
+                const accessToken = await getAccessTokenSilently({
+                    authorizationParams: {
+                        audience: productServiceAudience
+                    }
+                })
+
+                let product = await axios.get(`${productServiceUrl}/products/${productId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+
                 setProduct(product.data.products[0]);
             }
             catch{
@@ -30,7 +45,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
             }
         }
 
-        fetchProduct();
+        if (!initialized.current){
+            initialized.current = true;
+            fetchProduct();
+        }
     },[]);
 
     return (

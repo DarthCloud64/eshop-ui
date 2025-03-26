@@ -2,7 +2,7 @@ declare const window: any;
 
 import { Alert, Button, Card, CardActions, CardContent, Grid2 } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Product from "../models/product";
 import { Link } from "react-router";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -12,6 +12,7 @@ const productServiceAudience = import.meta.env.VITE_AUTH0_PRODUCT_AUDIENCE ?? wi
 
 const Products = () => {
     const {getAccessTokenSilently} = useAuth0();
+    const initialized = useRef(false);
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
@@ -35,7 +36,10 @@ const Products = () => {
             }
         }
 
-        fetchProducts();
+        if (!initialized.current){
+            initialized.current = true;
+            fetchProducts();
+        }
     }, []);
 
     return (
