@@ -16,7 +16,6 @@ const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
-        console.log(audience);
         const fetchProducts = async () => {
             try{
                 const accessToken = await getAccessTokenSilently({

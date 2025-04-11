@@ -16,10 +16,10 @@ interface CartIconProps {
   cart: Cart
 }
 
-const CartIcon: React.FC<CartIconProps> = ({cart}) => {
+const CartIcon: React.FC<CartIconProps> = ({cart}) => {  
   return (
     <IconButton aria-label="cart">
-      <StyledBadge badgeContent={cart?.products.length} color="secondary">
+      <StyledBadge badgeContent={Array.from(cart?.products?.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0)} color="secondary">
         <ShoppingCartIcon />
       </StyledBadge>
     </IconButton>

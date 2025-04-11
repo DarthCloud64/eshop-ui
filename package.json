@@ -7,6 +7,7 @@
     "dev": "vite --mode loc",
     "build": "tsc -b && vite build",
     "build-dev": "tsc -b && vite build --mode development",
+    "build-loc": "tsc -b && vite build --mode loc",
     "lint": "eslint .",
     "preview": "vite preview"
   },

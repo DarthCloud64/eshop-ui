@@ -88,8 +88,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
                         }
                     });
 
-                    setCart(getCartResponse.data.carts[0]);
-                    localStorage.setItem("user-cart", JSON.stringify(getCartResponse.data.carts[0]));
+                    let newCartInstance = getCartResponse.data.carts[0];
+                    localStorage.setItem("user-cart", JSON.stringify(newCartInstance));
+
+                    if(newCartInstance && newCartInstance.products  && !(newCartInstance.products instanceof Map)) {
+                        newCartInstance.products = new Map(Object.entries(newCartInstance.products));
+                    }
+
+                    setCart(newCartInstance);
                 }
                 else {
                     let addProductToCartRequest = {
@@ -109,8 +115,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({cart, setCart}) => {
                         }
                     });
 
-                    setCart(getCartResponse.data.carts[0]);
-                    localStorage.setItem("user-cart", JSON.stringify(getCartResponse.data.carts[0]));
+                    let newCartInstance = getCartResponse.data.carts[0];
+                    localStorage.setItem("user-cart", JSON.stringify(newCartInstance));
+
+                    if(newCartInstance && newCartInstance.products  && !(newCartInstance.products instanceof Map)) {
+                        newCartInstance.products = new Map(Object.entries(newCartInstance.products));
+                    }
+
+                    setCart(newCartInstance);
                 }
             }}>Add to Cart</Button>
         </>
