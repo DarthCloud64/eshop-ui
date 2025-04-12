@@ -62,7 +62,7 @@ const App = () => {
         <Routes>
           <Route path="/products" element={<Products/>}/>
           <Route path="/products/:productId" element={<ProductDetails cart={cart} setCart={setCart}/>}/>
-          <Route path="/cart/checkout" element={<CartCheckout cart={cart} />}/>
+          <Route path="/cart/checkout" element={<CartCheckout cart={cart} setCart={setCart} />}/>
         </Routes>
       </BrowserRouter>
     </>
