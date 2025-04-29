@@ -1,32 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import './App.css'
-import CartIcon from './carts/cart-icon.component'
-import Products from './products/products.component'
-import ProductDetails from './products/product-details.component'
-import Cart from './models/cart'
+import Products from './features/products/products'
+import ProductDetails from './features/productDetails/product-details'
 import { BrowserRouter, Route, Routes, Link as RouterLink } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { Grid2, Link } from '@mui/material'
-import CartCheckout from './carts/cart-checkout.component'
+import CartCheckout from './features/cart/cart-checkout.component'
+import CartIcon from './features/cart/cart-icon.component'
+import { useAppSelector } from './app/hooks'
 
 const App = () => {
-  const [cart, setCart] = useState<Cart>(() => {
-    try {
-      const savedCart = JSON.parse(localStorage.getItem("user-cart") || "");
-      savedCart.products = new Map(Object.entries(savedCart.products));
-
-      return savedCart;
-    }
-    catch (error) {
-      return {id: "", products: []}
-    }
-  });
+  const cart = useAppSelector(state => state.cart);
 
   useEffect(() => {
-    if(cart && cart.products  && !(cart.products instanceof Map)) {
-      cart.products = new Map(Object.entries(cart.products));
+    if(cart.cart && cart.cart.products  && !(cart.cart.products instanceof Map)) {
+      cart.cart.products = new Map(Object.entries(cart.cart.products));
     }
-  }, [cart])
+  }, [cart.cart])
 
   const {loginWithRedirect, logout, isAuthenticated, user} = useAuth0();
   
@@ -52,7 +42,7 @@ const App = () => {
             <h3>{user?.email}</h3>
           </Grid2>
           <Grid2 size={2}>
-            <Link component={RouterLink} to="/cart/checkout"><CartIcon cart={cart}/></Link>
+            <Link component={RouterLink} to="/cart/checkout"><CartIcon/></Link>
           </Grid2>
           <Grid2 size={2}>
             <Link component={RouterLink} to="/products">Products</Link>
@@ -61,8 +51,8 @@ const App = () => {
 
         <Routes>
           <Route path="/products" element={<Products/>}/>
-          <Route path="/products/:productId" element={<ProductDetails cart={cart} setCart={setCart}/>}/>
-          <Route path="/cart/checkout" element={<CartCheckout cart={cart} setCart={setCart} />}/>
+          <Route path="/products/:productId" element={<ProductDetails/>}/>
+          <Route path="/cart/checkout" element={<CartCheckout />}/>
         </Routes>
       </BrowserRouter>
     </>

@@ -1,26 +1,24 @@
 declare const window: any;
 
-import { SetStateAction, useEffect, useState } from "react";
-import Cart from "../models/cart";
+import { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import Product from "../models/product";
 import axios from "axios";
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { Product } from "../products/productsSlice";
+import { cartChanged, cartProductsAdded } from "./cartSlice";
 
 const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
 const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? window._env_.VITE_ORDER_SERVICE;
 const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_.VITE_AUTH0_AUDIENCE;
 
-interface CartProps{
-    cart: Cart,
-    setCart: React.Dispatch<SetStateAction<Cart>>
-}
-
-const CartCheckout: React.FC<CartProps> = ({cart, setCart}) => {
+const CartCheckout = () => {
+    const dispatch = useAppDispatch();
     const {getAccessTokenSilently} = useAuth0();
-    const [products, setProducts] = useState<Map<Number, Product>>(new Map<Number, Product>());
+    const cart = useAppSelector(state => state.cart.cart);
+    const cartProducts = useAppSelector(state => state.cart.cartProducts);
 
     useEffect(() => {
         const fetchProduct = async (productId: String) => {
@@ -45,7 +43,7 @@ const CartCheckout: React.FC<CartProps> = ({cart, setCart}) => {
             fetchProduct(key).then(product => {
                 let map = new Map<Number, Product>();
                 map.set(val, product?.data.products[0]);
-                setProducts(map);
+                dispatch(cartProductsAdded(map));
             });
         })
     }, [cart]);
@@ -86,7 +84,7 @@ const CartCheckout: React.FC<CartProps> = ({cart, setCart}) => {
         }
 
         action().then(newCartInstance => {
-            setCart(newCartInstance);
+            dispatch(cartChanged(newCartInstance));
         });
     }
 
@@ -101,7 +99,7 @@ const CartCheckout: React.FC<CartProps> = ({cart, setCart}) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Array.from(products?.entries()).map(([key, val]) => (
+                        {Array.from(cartProducts?.entries()).map(([key, val]) => (
                             <TableRow key={val.id.toString()}>
                                 <TableCell>{val.name}</TableCell>
                                 <TableCell><Button onClick={() => removeProductFromCart(val.id)}><RemoveIcon/></Button>{key.toString()}<Button><AddIcon/></Button></TableCell>

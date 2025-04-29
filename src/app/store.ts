@@ -1,20 +1,13 @@
-import {Action, configureStore} from '@reduxjs/toolkit'
-
-interface DummyState {
-    dumb: number
-};
-
-function dummyReducer(state: DummyState = {dumb: 0}, action: Action){
-    switch(action.type){
-        default: {
-            return state;
-        }
-    }
-}
+import {configureStore} from '@reduxjs/toolkit'
+import productsReducer from '../features/products/productsSlice'
+import productDetailsReducer from '../features/productDetails/productDetailsSlice'
+import cartReducer from '../features/cart/cartSlice'
 
 export const store = configureStore({
     reducer: {
-        dummy: dummyReducer
+        products: productsReducer,
+        productDetails: productDetailsReducer,
+        cart: cartReducer
     }
 });
 

@@ -2,18 +2,20 @@ declare const window: any;
 
 import { Alert, Button, Card, CardActions, CardContent, Grid2 } from "@mui/material";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import Product from "../models/product";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { productsAdded } from "./productsSlice";
 
 const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
 const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_.VITE_AUTH0_AUDIENCE;
 
 const Products = () => {
+    const dispatch = useAppDispatch();
     const {getAccessTokenSilently} = useAuth0();
     const initialized = useRef(false);
-    const [products, setProducts] = useState<Product[]>([]);
+    const products = useAppSelector(state => state.products);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -29,7 +31,8 @@ const Products = () => {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
-                setProducts(products.data.products);
+
+                dispatch(productsAdded(products.data.products));
             }
             catch{
                 

@@ -1,7 +1,7 @@
 import { IconButton, styled } from "@mui/material";
 import Badge, { BadgeProps } from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Cart from "../models/cart";
+import { useAppSelector } from "../../app/hooks";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -12,11 +12,9 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     },
   }));
 
-interface CartIconProps {
-  cart: Cart
-}
+const CartIcon = () => {  
+  const cart = useAppSelector(state => state.cart.cart);
 
-const CartIcon: React.FC<CartIconProps> = ({cart}) => {  
   return (
     <IconButton aria-label="cart">
       <StyledBadge badgeContent={Array.from(cart?.products?.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0)} color="secondary">
