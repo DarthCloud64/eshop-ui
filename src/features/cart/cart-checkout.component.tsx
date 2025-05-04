@@ -8,7 +8,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Product } from "../products/productsSlice";
-import { cartChanged, cartProductsAdded } from "./cartSlice";
+import { cartChanged, cartProductsChanged } from "./cartSlice";
 
 const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
 const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? window._env_.VITE_ORDER_SERVICE;
@@ -39,11 +39,15 @@ const CartCheckout = () => {
             }
         }
 
+        if(cart?.products.size == 0){
+            dispatch(cartProductsChanged(new Map()));
+        }
+
         Array.from(cart?.products?.entries()).map(([key, val]) => {
             fetchProduct(key).then(product => {
                 let map = new Map<Number, Product>();
                 map.set(val, product?.data.products[0]);
-                dispatch(cartProductsAdded(map));
+                dispatch(cartProductsChanged(map));
             });
         })
     }, [cart]);

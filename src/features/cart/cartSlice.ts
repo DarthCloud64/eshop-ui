@@ -37,7 +37,7 @@ const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        cartProductsAdded(state, action: PayloadAction<Map<Number, Product>>) {
+        cartProductsChanged(state, action: PayloadAction<Map<Number, Product>>) {
             state.cartProducts = action.payload
         },
         cartChanged(state, action: PayloadAction<Cart>) {
@@ -47,7 +47,7 @@ const cartSlice = createSlice({
 })
 
 // export the actions
-export const {cartProductsAdded, cartChanged} = cartSlice.actions
+export const {cartProductsChanged, cartChanged} = cartSlice.actions
 
 // export the reducers
 export default cartSlice.reducer
