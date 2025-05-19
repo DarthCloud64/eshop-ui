@@ -1,3 +1,5 @@
+declare const window: any;
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 export interface Product {
@@ -10,20 +12,36 @@ export interface Product {
     number_of_reviews: number,
 }
 
-const initialState: Product[] = []
+interface ProductsState {
+    products: Product[],
+    loading: string
+}
+
+const initialState: ProductsState = {
+    products: [],
+    loading: "idle"
+}
 
 const productsSlice = createSlice({
     name: 'products',
     initialState,
     reducers: {
-        productsAdded(_, action: PayloadAction<Product[]>) {
-            return action.payload;
+        productsLoading(state, _: PayloadAction<ProductsState>){
+            if(state.loading === "idle"){
+                state.loading = "pending";
+            }
+        },
+        productsAdded(state, action: PayloadAction<ProductsState>) {
+            if(state.loading === "pending"){
+                state.loading = "idle";
+                state.products = action.payload.products;
+            }
         }
     }
 })
 
 // export the actions
-export const {productsAdded} = productsSlice.actions
+export const {productsLoading, productsAdded} = productsSlice.actions
 
 // export the reducers
 export default productsSlice.reducer

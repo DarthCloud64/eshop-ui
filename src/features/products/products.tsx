@@ -1,69 +1,45 @@
 declare const window: any;
 
-import { Alert, Button, Card, CardActions, CardContent, Grid2 } from "@mui/material";
-import axios from "axios";
-import { useEffect, useRef } from "react";
+import { Alert, Button, Card, CardActions, CardContent, CircularProgress, Grid2 } from "@mui/material";
 import { Link } from "react-router";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { productsAdded } from "./productsSlice";
-
-const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
-const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_.VITE_AUTH0_AUDIENCE;
+import { useGetProductsQuery } from "../api/productApiSlice";
 
 const Products = () => {
-    const dispatch = useAppDispatch();
-    const {getAccessTokenSilently} = useAuth0();
-    const initialized = useRef(false);
-    const products = useAppSelector(state => state.products);
+    const {data: products, isLoading, isSuccess, isError, error} = useGetProductsQuery()
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try{
-                const accessToken = await getAccessTokenSilently({
-                    authorizationParams: {
-                        audience: audience
-                    }
-                })
+    let content: React.ReactNode;
 
-                let products = await axios.get(`${productServiceUrl}/products`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
-
-                dispatch(productsAdded(products.data.products));
-            }
-            catch{
-                
-            }
-        }
-
-        if (!initialized.current){
-            initialized.current = true;
-            fetchProducts();
-        }
-    }, []);
+    if (isLoading) {
+        content = <CircularProgress />
+    }
+    else if (isSuccess) {
+        console.log(products);
+        content =  <>{products.products && products.products.map((product) => (
+            <Grid2 size={4}>
+                <Card variant="outlined" sx={{ minWidth: 275 }}>
+                    <CardContent>
+                        <h3>{product.name}</h3>
+                        <h4>${product.price.toFixed(2)}</h4>
+                        {product.inventory < 10 ? <><Alert severity="error">Limited Inventory: {product.inventory}</Alert></> : <></>}
+                    </CardContent>
+                    <CardActions>
+                        <Link to={`/products/${product.id}`}><Button size="small">View</Button></Link>
+                        <Button size="small">Add to Cart</Button>
+                    </CardActions>
+                </Card>
+            </Grid2>
+        ))}</>
+    }
+    else if (isError){
+        console.error(error);
+        content = <div>{error.toString()}</div>
+    }
 
     return (
         <>
             <h1>Products!!!</h1>
             <Grid2 container spacing={2}>
-                {products && products.map && products.map((product) => (
-                    <Grid2 size={4}>
-                        <Card variant="outlined" sx={{ minWidth: 275 }}>
-                            <CardContent>
-                                <h3>{product.name}</h3>
-                                <h4>${product.price.toFixed(2)}</h4>
-                                {product.inventory < 10 ? <><Alert severity="error">Limited Inventory: {product.inventory}</Alert></> : <></>}
-                            </CardContent>
-                            <CardActions>
-                                <Link to={`/products/${product.id}`}><Button size="small">View</Button></Link>
-                                <Button size="small">Add to Cart</Button>
-                            </CardActions>
-                        </Card>
-                    </Grid2>
-                ))}
+                {content}
             </Grid2>
         </>
     )

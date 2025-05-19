@@ -1,3 +1,5 @@
+declare const window: any;
+
 import { useEffect } from 'react'
 import './App.css'
 import Products from './features/products/products'
@@ -7,10 +9,15 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Grid2, Link } from '@mui/material'
 import CartCheckout from './features/cart/cart-checkout.component'
 import CartIcon from './features/cart/cart-icon.component'
-import { useAppSelector } from './app/hooks'
+import { useAppDispatch, useAppSelector } from './app/hooks'
+import { tokenFetched } from './features/security/securitySlice';
+
+const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_.VITE_AUTH0_AUDIENCE;
 
 const App = () => {
   const cart = useAppSelector(state => state.cart);
+  const dispatch = useAppDispatch();
+  const {loginWithRedirect, logout, isAuthenticated, user, getAccessTokenSilently} = useAuth0();
 
   useEffect(() => {
     if(cart.cart && cart.cart.products  && !(cart.cart.products instanceof Map)) {
@@ -18,7 +25,22 @@ const App = () => {
     }
   }, [cart.cart])
 
-  const {loginWithRedirect, logout, isAuthenticated, user} = useAuth0();
+  useEffect(() => {
+    (async () => {
+      try{
+        const accessToken = await getAccessTokenSilently({
+            authorizationParams: {
+                audience: audience
+            }
+        });
+
+        dispatch(tokenFetched(accessToken));
+      }
+      catch (e){
+        console.error(e);
+      }
+    })()
+  }, [getAccessTokenSilently])
   
   if(!isAuthenticated){
       return  (
