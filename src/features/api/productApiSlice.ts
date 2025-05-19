@@ -23,8 +23,11 @@ export const productApiSlice = createApi({
     endpoints: builder => ({
         getProducts: builder.query<GetProductsResponse, void>({
             query: () => "/products"
+        }),
+        getProductById: builder.query<GetProductsResponse, string>({
+            query: (productId) => `/products/${productId}`
         })
     })
 })
 
-export const {useGetProductsQuery} = productApiSlice
+export const {useGetProductsQuery, useGetProductByIdQuery} = productApiSlice
