@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Button, CircularProgress } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
 import { useGetProductByIdQuery } from "../api/productApiSlice";
-import { AddProductToCartRequest, CreateCartResponse, useAddProductToCartMutation, useCreateCartMutation, useGetCartByIdQuery } from "../api/orderApiSlice";
+import { AddProductToCartRequest, CreateCartResponse, useAddProductToCartMutation, useCreateCartMutation } from "../api/orderApiSlice";
 
 const ProductDetails = () => {
     let { productId } = useParams();

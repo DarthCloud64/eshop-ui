@@ -9,13 +9,12 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Grid2, Link } from '@mui/material'
 import CartCheckout from './features/cart/cart-checkout.component'
 import CartIcon from './features/cart/cart-icon.component'
-import { useAppDispatch, useAppSelector } from './app/hooks'
+import { useAppDispatch } from './app/hooks'
 import { tokenFetched } from './features/security/securitySlice';
 
 const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_.VITE_AUTH0_AUDIENCE;
 
 const App = () => {
-  const cart = useAppSelector(state => state.cart);
   const dispatch = useAppDispatch();
   const { loginWithRedirect, logout, isAuthenticated, user, getAccessTokenSilently } = useAuth0();
 
