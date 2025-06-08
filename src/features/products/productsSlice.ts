@@ -3,10 +3,10 @@ declare const window: any;
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 export interface Product {
-    id: String,
-    name: String,
+    id: string,
+    name: string,
     price: number,
-    description: String,
+    description: string,
     inventory: number,
     stars: number,
     number_of_reviews: number,
@@ -26,13 +26,13 @@ const productsSlice = createSlice({
     name: 'products',
     initialState,
     reducers: {
-        productsLoading(state, _: PayloadAction<ProductsState>){
-            if(state.loading === "idle"){
+        productsLoading(state, _: PayloadAction<ProductsState>) {
+            if (state.loading === "idle") {
                 state.loading = "pending";
             }
         },
         productsAdded(state, action: PayloadAction<ProductsState>) {
-            if(state.loading === "pending"){
+            if (state.loading === "pending") {
                 state.loading = "idle";
                 state.products = action.payload.products;
             }
@@ -41,7 +41,7 @@ const productsSlice = createSlice({
 })
 
 // export the actions
-export const {productsLoading, productsAdded} = productsSlice.actions
+export const { productsLoading, productsAdded } = productsSlice.actions
 
 // export the reducers
 export default productsSlice.reducer

@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import { useGetProductsQuery } from "../api/productApiSlice";
 
 const Products = () => {
-    const {data: products, isLoading, isSuccess, isError, error} = useGetProductsQuery()
+    const { data: products, isLoading, isSuccess, isError, error } = useGetProductsQuery()
 
     let content: React.ReactNode;
 
@@ -13,8 +13,7 @@ const Products = () => {
         content = <CircularProgress />
     }
     else if (isSuccess) {
-        console.log(products);
-        content =  <>{products.products && products.products.map((product) => (
+        content = <>{products.products && products.products.map((product) => (
             <Grid2 size={4}>
                 <Card variant="outlined" sx={{ minWidth: 275 }}>
                     <CardContent>
@@ -30,7 +29,7 @@ const Products = () => {
             </Grid2>
         ))}</>
     }
-    else if (isError){
+    else if (isError) {
         console.error(error);
         content = <div>{error.toString()}</div>
     }

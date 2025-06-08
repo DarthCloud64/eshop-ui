@@ -1,101 +1,56 @@
 declare const window: any;
 
 import { useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Button, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Product } from "../products/productsSlice";
-import { cartChanged, cartProductsChanged } from "./cartSlice";
-
-const productServiceUrl = import.meta.env.VITE_PRODUCT_SERVICE ?? window._env_.VITE_PRODUCT_SERVICE;
-const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? window._env_.VITE_ORDER_SERVICE;
-const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_.VITE_AUTH0_AUDIENCE;
+import { useLazyGetProductByIdQuery } from "../api/productApiSlice";
+import { RemoveProductFromCartRequest, useGetCartByIdQuery, useRemoveProductFromCartMutation } from "../api/orderApiSlice";
+import { productsAndQuantitiesMapChanged } from "./cartSlice";
 
 const CartCheckout = () => {
     const dispatch = useAppDispatch();
-    const {getAccessTokenSilently} = useAuth0();
-    const cart = useAppSelector(state => state.cart.cart);
-    const cartProducts = useAppSelector(state => state.cart.cartProducts);
+    const cartId = useAppSelector(state => state.cart.cartId);
+    const productsAndQuantitiesMap = useAppSelector(state => state.cart.productsAndQuantitiesMap)
+    const [removeProductFromCartMut, { isLoading }] = useRemoveProductFromCartMutation();
+    const { data: getCartResponse, isLoading: getCartIsLoading, isFetching: getCartIsFetching } = useGetCartByIdQuery(cartId);
+    const [getProductByIdQry] = useLazyGetProductByIdQuery();
 
     useEffect(() => {
-        const fetchProduct = async (productId: String) => {
-            try{
-                const accessToken = await getAccessTokenSilently({
-                    authorizationParams: {
-                        audience: audience
+        console.log("useEffect ran!");
+        if (getCartResponse && getCartResponse.carts.length > 0 && getCartResponse.carts[0].products.size > 0) {
+            Array.from(getCartResponse!.carts[0].products.entries()).map(([key, val]) => {
+                getProductByIdQry(key).then(products => {
+                    let map = new Map<Number, Product>();
+
+                    if (products.data!.products[0]) {
+                        map.set(val, products.data!.products[0]);
                     }
+
+                    dispatch(productsAndQuantitiesMapChanged(map));
                 })
-
-                return await axios.get(`${productServiceUrl}/products/${productId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
-            }
-            catch{
-            }
-        }
-
-        if(cart?.products.size == 0){
-            dispatch(cartProductsChanged(new Map()));
-        }
-
-        Array.from(cart?.products?.entries()).map(([key, val]) => {
-            fetchProduct(key).then(product => {
-                let map = new Map<Number, Product>();
-                map.set(val, product?.data.products[0]);
-                dispatch(cartProductsChanged(map));
-            });
-        })
-    }, [cart]);
-
-    const removeProductFromCart = (productId: String) => {
-        const action = async () => {
-            const accessToken = await getAccessTokenSilently({
-                authorizationParams: {
-                    audience: audience
-                }
-            });
-
-            let removeProductFromCartRequest = {
-                cart_id: cart.id,
-                product_id: productId,
-            };
-
-            await axios.put(`${orderServiceUrl}/carts/removeProductFromCart`, removeProductFromCartRequest, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
-
-            let getCartResponse = await axios.get(`${orderServiceUrl}/carts/${cart.id}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
             })
-
-            let newCartInstance = getCartResponse.data.carts[0];
-            localStorage.setItem("user-cart", JSON.stringify(newCartInstance));
-
-            if (newCartInstance && newCartInstance.products && !(newCartInstance.products instanceof Map)) {
-                newCartInstance.products = new Map(Object.entries(newCartInstance.products));
-            }
-
-            return newCartInstance;
         }
+        else {
+            dispatch(productsAndQuantitiesMapChanged(new Map()));
+        }
+    }, [getCartIsLoading, getCartIsFetching]);
 
-        action().then(newCartInstance => {
-            dispatch(cartChanged(newCartInstance));
-        });
+    const removeProductFromCart = async (productId: string) => {
+        let removeProductFromCartRequest: RemoveProductFromCartRequest = {
+            cart_id: cartId,
+            product_id: productId,
+        };
+
+        await removeProductFromCartMut(removeProductFromCartRequest);
     }
 
     return (
         <>
             <TableContainer component={Paper}>
-                <Table sx={{minWidth: 650}}>
+                <Table sx={{ minWidth: 650 }}>
                     <TableHead>
                         <TableRow>
                             <TableCell>Product</TableCell>
@@ -103,15 +58,16 @@ const CartCheckout = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Array.from(cartProducts?.entries()).map(([key, val]) => (
+                        {Array.from(productsAndQuantitiesMap?.entries()).map(([key, val]) => (
                             <TableRow key={val.id.toString()}>
                                 <TableCell>{val.name}</TableCell>
-                                <TableCell><Button onClick={() => removeProductFromCart(val.id)}><RemoveIcon/></Button>{key.toString()}<Button><AddIcon/></Button></TableCell>
+                                <TableCell><Button onClick={async () => await removeProductFromCart(val.id)}><RemoveIcon /></Button>{key.toString()}<Button><AddIcon /></Button></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+            {isLoading ? <CircularProgress /> : <></>}
         </>
     )
 }

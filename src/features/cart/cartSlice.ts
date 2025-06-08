@@ -1,34 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { Product } from "../products/productsSlice"
+import { Product } from "../products/productsSlice";
 
-interface Cart {
-    id: String,
-    products: Map<String, number>,
+export interface Cart {
+    id: string,
+    products: Map<string, number>,
 }
 
 interface CartState {
-    cart: Cart,
-    cartProducts: Map<Number, Product>
+    cartId: string,
+    productsAndQuantitiesMap: Map<Number, Product>
 }
 
 const setInitialCartState = (): CartState => {
-    try {
-        const savedCart = JSON.parse(localStorage.getItem("user-cart") || "");
-        savedCart.products = new Map(Object.entries(savedCart.products));
-  
-        return {
-            cart: savedCart,
-            cartProducts: new Map()
-        }
-      }
-      catch (error) {
-        console.log(error);
-        
-        return {
-            cart: {id: "", products: new Map()},
-            cartProducts: new Map()
-        }
-      }
+    return {
+        cartId: localStorage.getItem("user-cart") || "",
+        productsAndQuantitiesMap: new Map()
+    };
 }
 
 const initialState: CartState = setInitialCartState();
@@ -37,17 +24,17 @@ const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        cartProductsChanged(state, action: PayloadAction<Map<Number, Product>>) {
-            state.cartProducts = action.payload
+        cartCreated(state, action: PayloadAction<string>) {
+            state.cartId = action.payload;
         },
-        cartChanged(state, action: PayloadAction<Cart>) {
-            state.cart = action.payload
+        productsAndQuantitiesMapChanged(state, action: PayloadAction<Map<Number, Product>>) {
+            state.productsAndQuantitiesMap = action.payload;
         }
     }
 })
 
 // export the actions
-export const {cartProductsChanged, cartChanged} = cartSlice.actions
+export const { cartCreated, productsAndQuantitiesMapChanged } = cartSlice.actions
 
 // export the reducers
 export default cartSlice.reducer
