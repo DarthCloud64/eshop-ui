@@ -3,9 +3,7 @@ import { selectAccessToken } from "../security/securitySlice";
 import { RootState } from '../../app/store';
 import { Cart } from "../cart/cartSlice";
 
-declare const window: any;
-
-const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? window._env_.VITE_ORDER_SERVICE;
+const orderServiceUrl = import.meta.env.VITE_ORDER_SERVICE ?? window._env_?.VITE_ORDER_SERVICE;
 
 export interface RemoveProductFromCartRequest {
     cart_id: string,
