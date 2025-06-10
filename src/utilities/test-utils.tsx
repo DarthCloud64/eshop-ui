@@ -23,7 +23,9 @@ export function renderWithProviders(
 
     // Define a wrapper which will wrap the React elements with a Redux provider with the defined store
     const Wrapper = ({ children }: PropsWithChildren) => (
-        <Provider store={store}>{children}</Provider>
+        <Provider store={store}>
+            {children}
+        </Provider>
     );
 
     // Call the RTL render() with the UI elements and wrapper

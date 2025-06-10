@@ -9,7 +9,7 @@ import { setupStore } from './app/store.ts';
 
 const auth0Domain = import.meta.env.VITE_AUTH0_DOMAIN;
 const auth0Client = import.meta.env.VITE_AUTH0_CLIENT_ID;
-const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_?.VITE_AUTH0_AUDIENCE;
+const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? (window as any)._env_?.VITE_AUTH0_AUDIENCE;
 
 const darkTheme = createTheme({
   palette: {

@@ -11,7 +11,7 @@ import CartIcon from './features/cart/cart-icon.component'
 import { useAppDispatch } from './app/hooks'
 import { tokenFetched } from './features/security/securitySlice';
 
-const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? window._env_?.VITE_AUTH0_AUDIENCE;
+const audience = import.meta.env.VITE_AUTH0_AUDIENCE ?? (window as any)._env_?.VITE_AUTH0_AUDIENCE;
 
 const App = () => {
   const dispatch = useAppDispatch();
