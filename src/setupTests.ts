@@ -16,6 +16,9 @@ vi.stubGlobal('import', {
 // Mock the global window
 vi.stubGlobal('window', {
     ...window,
+    location: {
+        origin: ""
+    },
     _env_: {
         VITE_AUTH0_AUDIENCE: 'VITE_AUTH0_AUDIENCE',
         VITE_ORDER_SERVICE: 'VITE_ORDER_SERVICE',

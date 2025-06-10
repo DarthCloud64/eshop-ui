@@ -50,5 +50,55 @@ describe("App", () => {
         // Assert
         const { loginWithRedirect } = mockUseAuth0.mock.results[0].value;
         expect(loginWithRedirect).toHaveBeenCalled();
-    })
+    });
+
+    it("renders the routes when the user is logged in", () => {
+        // Arrange
+        mockUseAuth0.mockReturnValue({
+            isAuthenticated: true, // Default to not logged in
+            isLoading: false, // Default to not loading
+            error: undefined, // Default to no error
+            user: undefined, // Default to no user
+            loginWithRedirect: vi.fn(), // Ensure this is a spy
+            logout: vi.fn(), // Ensure this is a spy
+            getAccessTokenSilently: vi.fn(), // Mock async functions
+            getAccessTokenWithPopup: vi.fn(),
+            getIdTokenClaims: vi.fn(),
+            handleRedirectCallback: vi.fn(),
+            loginWithPopup: vi.fn()
+        });
+
+        // Act
+        renderWithProviders(<App />);
+
+        // Assert
+        const logoutButton = screen.getByText("Logout");
+        expect(logoutButton).toBeInTheDocument();
+    });
+
+    it("logs the user out when the logout button is clicked", () => {
+        // Arrange
+        mockUseAuth0.mockReturnValue({
+            isAuthenticated: true, // Default to not logged in
+            isLoading: false, // Default to not loading
+            error: undefined, // Default to no error
+            user: undefined, // Default to no user
+            loginWithRedirect: vi.fn(), // Ensure this is a spy
+            logout: vi.fn(), // Ensure this is a spy
+            getAccessTokenSilently: vi.fn(), // Mock async functions
+            getAccessTokenWithPopup: vi.fn(),
+            getIdTokenClaims: vi.fn(),
+            handleRedirectCallback: vi.fn(),
+            loginWithPopup: vi.fn()
+        });
+
+        // Act
+        renderWithProviders(<App />);
+        const logoutButton = screen.getByText("Logout");
+        logoutButton.click();
+
+        // Assert
+        const { logout } = mockUseAuth0.mock.results[0].value;
+        expect(logout).toHaveBeenCalled();
+    });
 });
