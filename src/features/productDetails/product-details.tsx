@@ -13,14 +13,13 @@ const ProductDetails = () => {
     const [createCartMut] = useCreateCartMutation();
     const [addProductToCartMut] = useAddProductToCartMutation();
 
-
     let content: React.ReactNode;
 
     if (getProductByIdIsLoading) {
         content = <CircularProgress />
     }
     else if (isSuccess) {
-        content = <><h1>{products.products[0].name}</h1>
+        content = <><h1 data-testid="product-name-header">{products.products[0].name}</h1>
             <h2>{products.products[0].description}</h2>
             <Button size="small" onClick={async () => {
                 if (cartId === "") {
@@ -50,9 +49,9 @@ const ProductDetails = () => {
     }
 
     return (
-        <>
+        <div data-testid="product-details-container">
             {content}
-        </>
+        </div>
     )
 }
 
