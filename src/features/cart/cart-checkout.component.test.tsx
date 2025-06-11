@@ -29,12 +29,41 @@ describe("CartCheckout", () => {
             preloadedState: preloadedState
         });
 
-        const tableBody = screen.getByTestId("checkout-items-1");
-
         // Assert
+        const tableBody = screen.getByTestId("checkout-items-1");
         await waitFor(() => {
             expect(tableBody).toBeInTheDocument();
             expect(tableBody).not.toBeEmptyDOMElement();
         }, { timeout: 5000, container: tableBody })
     });
+
+    it("removes a product from the cart when the button is clicked", async () => {
+        // Arrange
+        const preloadedState = {
+            cart: {
+                cartId: "cart123",
+                productsAndQuantitiesMap: new Map()
+            }
+        }
+
+        // Act
+        renderWithProviders(<CartCheckout />, {
+            preloadedState: preloadedState
+        });
+
+        const tableBody = screen.getByTestId("checkout-items-1");
+        await waitFor(() => {
+            expect(tableBody).toBeInTheDocument();
+            expect(tableBody).not.toBeEmptyDOMElement();
+        }, { timeout: 5000, container: tableBody });
+
+        const productInCartButton = screen.getByTestId("checkout-remove-button");
+        expect(productInCartButton).toBeInTheDocument();
+        productInCartButton.click();
+
+        // Assert
+        await waitFor(() => {
+            expect(productInCartButton).not.toBeInTheDocument();
+        }, { timeout: 5000, container: tableBody });
+    })
 });

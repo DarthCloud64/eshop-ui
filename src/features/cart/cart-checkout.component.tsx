@@ -60,7 +60,7 @@ const CartCheckout = () => {
                         {Array.from(productsAndQuantitiesMap?.entries()).map(([key, val]) => (
                             <TableRow key={val.id.toString()}>
                                 <TableCell>{val.name}</TableCell>
-                                <TableCell><Button onClick={async () => await removeProductFromCart(val.id)}><RemoveIcon /></Button>{key.toString()}<Button><AddIcon /></Button></TableCell>
+                                <TableCell><Button data-testid="checkout-remove-button" onClick={async () => await removeProductFromCart(val.id)}><RemoveIcon /></Button>{key.toString()}<Button><AddIcon /></Button></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
