@@ -17,8 +17,6 @@ const CartIcon = () => {
   const cartId = useAppSelector(state => state.cart.cartId);
   const { data: getCartResponse } = useGetCartByIdQuery(cartId ?? "");
 
-  console.log(getCartResponse);
-
   return (
     <IconButton aria-label="cart">
       <StyledBadge badgeContent={getCartResponse && getCartResponse.carts.length > 0 && getCartResponse.carts[0].products.size > 0 && Array.from(getCartResponse.carts[0].products.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0)} color="secondary">

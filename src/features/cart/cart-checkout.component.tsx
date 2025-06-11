@@ -19,7 +19,6 @@ const CartCheckout = () => {
     const [getProductByIdQry] = useLazyGetProductByIdQuery();
 
     useEffect(() => {
-        console.log("useEffect ran!");
         if (getCartResponse && getCartResponse.carts.length > 0 && getCartResponse.carts[0].products.size > 0) {
             Array.from(getCartResponse!.carts[0].products.entries()).map(([key, val]) => {
                 getProductByIdQry(key).then(products => {
@@ -36,7 +35,7 @@ const CartCheckout = () => {
         else {
             dispatch(productsAndQuantitiesMapChanged(new Map()));
         }
-    }, [getCartIsLoading, getCartIsFetching]);
+    }, [getCartResponse, getProductByIdQry, getCartIsFetching, getCartIsLoading]);
 
     const removeProductFromCart = async (productId: string) => {
         let removeProductFromCartRequest: RemoveProductFromCartRequest = {
@@ -57,7 +56,7 @@ const CartCheckout = () => {
                             <TableCell>Quantity</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody data-testid="checkout-items-1">
                         {Array.from(productsAndQuantitiesMap?.entries()).map(([key, val]) => (
                             <TableRow key={val.id.toString()}>
                                 <TableCell>{val.name}</TableCell>
