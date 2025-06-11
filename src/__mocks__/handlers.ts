@@ -37,7 +37,7 @@ export const handlers = [
         })
     }),
 
-    http.get(`${orderServiceUrl}/carts/:cartId`, (req) => {
+    http.get(`${orderServiceUrl}/carts/:cartId`, () => {
         console.debug("msw cart " + mswCart.products.product123);
         return HttpResponse.json({
             carts: [
