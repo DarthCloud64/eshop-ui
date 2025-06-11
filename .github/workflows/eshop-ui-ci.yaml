@@ -2,12 +2,11 @@ name: eshop-ui Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-
   build:
     permissions:
       contents: read
@@ -20,29 +19,29 @@ jobs:
         node-version: [22.x]
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-    
-    - name: Replace domain secret in .env.development
-      run: sed -i "s/__VITE_AUTH0_DOMAIN__/${{ secrets.VITE_AUTH0_DOMAIN }}/g" .env.development
-    - name: Replace client_id secret in .env.development
-      run: sed -i "s/__VITE_AUTH0_CLIENT_ID__/${{ secrets.VITE_AUTH0_CLIENT_ID }}/g" .env.development
-    - name: Replace audience secret in .env.development
-      run: sed -i "s|__VITE_AUTH0_AUDIENCE__|${{ secrets.VITE_AUTH0_AUDIENCE }}|g" .env.development
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Build the eshop React App ${{matrix.node-version}}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{matrix.node-version}}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build-dev
+      - name: Replace domain secret in .env.development
+        run: sed -i "s/__VITE_AUTH0_DOMAIN__/${{ secrets.VITE_AUTH0_DOMAIN }}/g" .env.development
+      - name: Replace client_id secret in .env.development
+        run: sed -i "s/__VITE_AUTH0_CLIENT_ID__/${{ secrets.VITE_AUTH0_CLIENT_ID }}/g" .env.development
+      - name: Replace audience secret in .env.development
+        run: sed -i "s|__VITE_AUTH0_AUDIENCE__|${{ secrets.VITE_AUTH0_AUDIENCE }}|g" .env.development
 
-    
-    - name: Build the Docker image and push to ACR
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Build the eshop React App ${{matrix.node-version}}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{matrix.node-version}}
+          cache: "npm"
+      - run: npm ci
+      - run: npm run test
+      - run: npm run build-dev
 
-    - name: Build and push image to ACR
-      run: az acr build --registry ${{ secrets.ACR_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --image "eshop-aks/ui":$(date +%Y%m%d%H%M%S) .
+      - name: Build the Docker image and push to ACR
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and push image to ACR
+        run: az acr build --registry ${{ secrets.ACR_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --image "eshop-aks/ui":$(date +%Y%m%d%H%M%S) .
